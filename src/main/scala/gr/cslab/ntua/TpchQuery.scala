@@ -90,7 +90,7 @@ case class Supplier(
   * Savvas Savvides <ssavvides@us.ibm.com>
   *
   */
-case class TpchQuery(sparkMaster: String = "master", hdfsPath: String = "/tpch",
+case class TpchQuery(sc: SparkContext, sparkMaster: String = "master", hdfsPath: String = "/tpch",
                      jar: String = "/target/tpch-spark-1.0-SNAPSHOT.jar") {
 
   // read files from local FS
@@ -106,8 +106,8 @@ case class TpchQuery(sparkMaster: String = "master", hdfsPath: String = "/tpch",
   val className = this.getClass.getName.split("\\.").last.replaceAll("\\$", "")
 
   // create spark context and set class name as the app name
-  val sc = new SparkContext(new SparkConf().setAppName("TPC-H " + className).setMaster(s"spark://${sparkMaster}:7077")
-    .setJars(Seq("target/tpch-spark-1.0-SNAPSHOT.jar")))
+  //val sc = new SparkContext(new SparkConf().setAppName("TPC-H " + className).setMaster(s"spark://${sparkMaster}:7077")
+    //.setJars(Seq("target/tpch-spark-1.0-SNAPSHOT.jar")))
 
   // convert an RDDs to a DataFrames
   val sqlContext = new org.apache.spark.sql.SQLContext(sc)
