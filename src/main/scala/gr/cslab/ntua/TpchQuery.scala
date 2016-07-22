@@ -90,7 +90,7 @@ case class Supplier(
   * Savvas Savvides <ssavvides@us.ibm.com>
   *
   */
-case class TpchQuery(sc: SparkContext, sparkMaster: String = "master", hdfsPath: String = "/tpch",
+case class TpchQuery(sc: SparkContext = null, sparkMaster: String = "master", hdfsPath: String = "/tpch",
                      jar: String = "/target/tpch-spark-1.0-SNAPSHOT.jar") {
 
   // read files from local FS
