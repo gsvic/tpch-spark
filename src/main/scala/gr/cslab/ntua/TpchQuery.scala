@@ -88,7 +88,7 @@ case class Supplier(
   * Savvas Savvides <ssavvides@us.ibm.com>
   *
   */
-case class TpchQuery(sc: SparkContext, sqlContext: SparkSession, sparkMaster: String = "master", hdfsPath: String = "/tpch",
+case class TpchQuery(sc: SparkContext= null, sqlContext: SparkSession = null, sparkMaster: String = "master", hdfsPath: String = "/tpch",
                      jar: String = "/target/tpch-spark-1.0-SNAPSHOT.jar") {
 
   // read files from local FS
@@ -165,8 +165,7 @@ object TpchQuery {
 
 }
 
-/*
+
 object ok extends App{
-  val t = new TpchQuery("localhost", "hdfs://master:9000/tpch/tpch5_tbl")
-  println(t.getDF("customer").first)
-}*/
+
+}
