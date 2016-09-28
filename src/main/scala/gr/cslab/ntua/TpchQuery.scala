@@ -1,9 +1,7 @@
 package gr.cslab.ntua
 
-import org.apache.spark.SparkConf
 import org.apache.spark.SparkContext
-
-import org.apache.spark.sql.DataFrame
+import org.apache.spark.sql.{DataFrame, SparkSession}
 
 case class Customer(
                      c_custkey: Int,
@@ -90,7 +88,7 @@ case class Supplier(
   * Savvas Savvides <ssavvides@us.ibm.com>
   *
   */
-case class TpchQuery(sc: SparkContext = null, sparkMaster: String = "master", hdfsPath: String = "/tpch",
+case class TpchQuery(sc: SparkContext, sqlContext: SparkSession, sparkMaster: String = "master", hdfsPath: String = "/tpch",
                      jar: String = "/target/tpch-spark-1.0-SNAPSHOT.jar") {
 
   // read files from local FS
@@ -110,17 +108,24 @@ case class TpchQuery(sc: SparkContext = null, sparkMaster: String = "master", hd
     //.setJars(Seq("target/tpch-spark-1.0-SNAPSHOT.jar")))
 
   // convert an RDDs to a DataFrames
-  val sqlContext = new org.apache.spark.sql.SQLContext(sc)
   import sqlContext.implicits._
 
-  val customer = sc.textFile(INPUT_DIR + "/customer.tbl").map(_.split('|')).map(p => Customer(p(0).trim.toInt, p(1).trim, p(2).trim, p(3).trim.toInt, p(4).trim, p(5).trim.toDouble, p(6).trim, p(7).trim)).toDF()
-  val lineitem = sc.textFile(INPUT_DIR + "/lineitem.tbl").map(_.split('|')).map(p => Lineitem(p(0).trim.toInt, p(1).trim.toInt, p(2).trim.toInt, p(3).trim.toInt, p(4).trim.toDouble, p(5).trim.toDouble, p(6).trim.toDouble, p(7).trim.toDouble, p(8).trim, p(9).trim, p(10).trim, p(11).trim, p(12).trim, p(13).trim, p(14).trim, p(15).trim)).toDF()
-  val nation = sc.textFile(INPUT_DIR + "/nation.tbl").map(_.split('|')).map(p => Nation(p(0).trim.toInt, p(1).trim, p(2).trim.toInt, p(3).trim)).toDF()
-  val region = sc.textFile(INPUT_DIR + "/region.tbl").map(_.split('|')).map(p => Region(p(0).trim.toInt, p(1).trim, p(1).trim)).toDF()
-  val order = sc.textFile(INPUT_DIR + "/orders.tbl").map(_.split('|')).map(p => Order(p(0).trim.toInt, p(1).trim.toInt, p(2).trim, p(3).trim.toDouble, p(4).trim, p(5).trim, p(6).trim, p(7).trim.toInt, p(8).trim)).toDF()
-  val part = sc.textFile(INPUT_DIR + "/part.tbl").map(_.split('|')).map(p => Part(p(0).trim.toInt, p(1).trim, p(2).trim, p(3).trim, p(4).trim, p(5).trim.toInt, p(6).trim, p(7).trim.toDouble, p(8).trim)).toDF()
-  val partsupp = sc.textFile(INPUT_DIR + "/partsupp.tbl").map(_.split('|')).map(p => Partsupp(p(0).trim.toInt, p(1).trim.toInt, p(2).trim.toInt, p(3).trim.toDouble, p(4).trim)).toDF()
-  val supplier = sc.textFile(INPUT_DIR + "/supplier.tbl").map(_.split('|')).map(p => Supplier(p(0).trim.toInt, p(1).trim, p(2).trim, p(3).trim.toInt, p(4).trim, p(5).trim.toDouble, p(6).trim)).toDF()
+  val customer = sc.textFile(INPUT_DIR + "/customer.tbl").map(_.split('|'))
+    .map(p => Customer(p(0).trim.toInt, p(1).trim, p(2).trim, p(3).trim.toInt, p(4).trim, p(5).trim.toDouble, p(6).trim, p(7).trim)).toDF()
+  val lineitem = sc.textFile(INPUT_DIR + "/lineitem.tbl")
+    .map(_.split('|')).map(p => Lineitem(p(0).trim.toInt, p(1).trim.toInt, p(2).trim.toInt, p(3).trim.toInt, p(4).trim.toDouble, p(5).trim.toDouble, p(6).trim.toDouble, p(7).trim.toDouble, p(8).trim, p(9).trim, p(10).trim, p(11).trim, p(12).trim, p(13).trim, p(14).trim, p(15).trim)).toDF()
+  val nation = sc.textFile(INPUT_DIR + "/nation.tbl")
+    .map(_.split('|')).map(p => Nation(p(0).trim.toInt, p(1).trim, p(2).trim.toInt, p(3).trim)).toDF()
+  val region = sc.textFile(INPUT_DIR + "/region.tbl")
+    .map(_.split('|')).map(p => Region(p(0).trim.toInt, p(1).trim, p(1).trim)).toDF()
+  val order = sc.textFile(INPUT_DIR + "/orders.tbl")
+    .map(_.split('|')).map(p => Order(p(0).trim.toInt, p(1).trim.toInt, p(2).trim, p(3).trim.toDouble, p(4).trim, p(5).trim, p(6).trim, p(7).trim.toInt, p(8).trim)).toDF()
+  val part = sc.textFile(INPUT_DIR + "/part.tbl")
+    .map(_.split('|')).map(p => Part(p(0).trim.toInt, p(1).trim, p(2).trim, p(3).trim, p(4).trim, p(5).trim.toInt, p(6).trim, p(7).trim.toDouble, p(8).trim)).toDF()
+  val partsupp = sc.textFile(INPUT_DIR + "/partsupp.tbl")
+    .map(_.split('|')).map(p => Partsupp(p(0).trim.toInt, p(1).trim.toInt, p(2).trim.toInt, p(3).trim.toDouble, p(4).trim)).toDF()
+  val supplier = sc.textFile(INPUT_DIR + "/supplier.tbl")
+    .map(_.split('|')).map(p => Supplier(p(0).trim.toInt, p(1).trim, p(2).trim, p(3).trim.toInt, p(4).trim, p(5).trim.toDouble, p(6).trim)).toDF()
 
   /**
     *  implemented in children classes and hold the actual query
